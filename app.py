@@ -17,19 +17,20 @@ from langchain_community.document_loaders import PyPDFLoader
 # Load environment variables
 # -------------------------
 # -------------------------
-# Load API keys (local + Streamlit Cloud)
+# -------------------------
+# Load API keys safely
 # -------------------------
 load_dotenv()
 
-OPENAI_API_KEY = st.secrets.get(
-    "OPENAI_API_KEY",
-    os.getenv("OPENAI_API_KEY")
-)
+try:
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+except Exception:
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-GROQ_API_KEY = st.secrets.get(
-    "GROQ_API_KEY",
-    os.getenv("GROQ_API_KEY")
-)
+try:
+    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+except Exception:
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if OPENAI_API_KEY:
     os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
