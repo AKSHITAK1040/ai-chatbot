@@ -16,13 +16,24 @@ from langchain_community.document_loaders import PyPDFLoader
 # -------------------------
 # Load environment variables
 # -------------------------
+# -------------------------
+# Load API keys (local + Streamlit Cloud)
+# -------------------------
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+OPENAI_API_KEY = st.secrets.get(
+    "OPENAI_API_KEY",
+    os.getenv("OPENAI_API_KEY")
+)
+
+GROQ_API_KEY = st.secrets.get(
+    "GROQ_API_KEY",
+    os.getenv("GROQ_API_KEY")
+)
 
 if OPENAI_API_KEY:
     os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+
 if GROQ_API_KEY:
     os.environ["GROQ_API_KEY"] = GROQ_API_KEY
 
@@ -100,13 +111,18 @@ for key, default in {
 # Validate API keys
 # -------------------------
 missing_keys = []
+
 if not OPENAI_API_KEY:
     missing_keys.append("OPENAI_API_KEY")
+
 if not GROQ_API_KEY:
     missing_keys.append("GROQ_API_KEY")
 
 if missing_keys:
-    st.error(f"Missing API keys in your .env file: {', '.join(missing_keys)}")
+    st.error(
+        f"Missing API keys: {', '.join(missing_keys)}. "
+        "Please check Streamlit Secrets."
+    )
     st.stop()
 
 # -------------------------
